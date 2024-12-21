@@ -1,0 +1,200 @@
+a:hover {
+    color: var(--c_color);
+}
+.adminBtn{background-color:var(--c_color);color:#fff;border: none;}
+.adminBtn:not(:disabled):hover{background-color:var(--c_colorH);color:#fff;}
+.adminLayout{
+    width: 100%;
+    height: 100vh;
+    .ant-layout{
+        background: #eff1f7;
+        position: relative;
+    }
+    .trigger {
+        font-size: 18px;
+        line-height: 64px;
+        padding: 0 24px 0 0;
+        cursor: pointer;
+    }
+
+    .ant-layout-sider{
+        position: relative;
+        .adminLogo{
+            height: 64px;line-height: 64px;text-align: center;font-size: 18px;font-weight: 600;
+            border-right: 1px solid #f1f1f1;
+        }
+
+        .adminMenu{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 64px;
+            bottom: 0;
+            width:100%;
+            overflow-y: auto;
+            .ant-menu-item:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected){
+                background-color: transparent;
+                .ant-menu-title-content{
+                    font-weight: 700;
+                    color: var(--c_color);
+                }
+            }
+            .ant-menu-item-selected{
+                color: var(--c_color);
+                background-color: transparent;
+            }
+            .ant-menu-submenu-title{
+                border-radius: 0;
+                background-color: transparent !important;
+            }
+            .ant-menu-submenu-title:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected) {
+                color: var(--c_color);
+                font-weight: 700;
+            }
+            .ant-menu-submenu-selected {
+                .ant-menu-submenu-title{
+                    color: var(--c_color);
+                    border-radius: 0;
+                    background-color: transparent !important;
+                }
+                .ant-menu-submenu-title:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected) {
+                    color: var(--c_color);
+                    font-weight: 700;
+                }
+            }
+        
+        }
+    }
+    
+    .adminHeader{
+        background: #fff !important; padding: 0;display: flex;justify-content: space-between;position: relative;padding:0 15px !important;
+        .adminHeader2{
+            display: flex;align-items: center;
+        }
+        .adminAvatar{
+            display: flex;justify-content: center;align-items: center;color:#000;padding-left:20px;
+            .adminAvatar1{
+                height: 44px;
+                margin-right:5px;
+                .adminAvatar11{
+                    height: 24px;
+                    line-height: 24px;
+                } 
+                .adminAvatar12{
+                    font-size: 10px;
+                    color:#999;
+                    height: 20px;
+                    line-height: 20px;
+                }
+            }
+            .adminAvatar2{
+                width: 44px;
+                height: 44px;
+                img{width: 100%;height: 100%;vertical-align: baseline;border-radius: 4px;}
+            }
+        }
+    }
+
+    .adminMainP{
+        margin:0;padding: 0;
+        position: absolute;
+        top:64px;
+        bottom: 0;
+        width: 100%;
+        overflow-y: auto;
+        .adminMain{
+            margin: 15px !important;
+            padding:15px;
+            background-color: white;min-height: 600px;
+            border-radius: 4px;
+            .adminMainTitle{
+                color: #2b2b2b;
+                font-weight: 600;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 15px;
+                height: 30px;
+                display: flex;
+                justify-content: space-between;
+                .nav-title{
+                    line-height: 30px;
+                    border-left: 2px solid #88b7e0;
+                    padding-left: 10px;
+                }
+
+            }
+            .mainTop{
+                display: flex;justify-content: space-between;margin-bottom: 15px;padding: 0 5px;
+                .searchBox{
+                    display: flex;
+                    input{
+                        max-width: 150px;
+                        margin-right: 10px;
+                    }
+                    .ant-select{
+                        max-width: 150px;
+                        margin-right: 10px;
+                    }
+                    button{
+                        background-color: #e7e7e7;
+                        border: 1px solid #ced4da;
+                        color:#2b2b2b;
+                    }
+                    button:hover{
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    }
+                }
+                .btnBox{
+                    button{
+                        margin-left: 20px;
+                    }
+                }
+            }
+            .mainContext{
+                display: flex;
+
+                .listBox{
+                    width:100%;margin-left:0;
+                }
+                .treeBox{
+                    width: 300px;
+                    border-radius: 8px;
+                    padding: 15px 10px;
+                    background-color: #fbfbfb;
+                    .ant-tree{
+                        background-color: transparent;
+                    }
+                }
+                .treeBox+.listBox{
+                    width:calc(100% - 315px);margin-left:15px;
+                }
+                
+                table {
+                    tr:nth-child(even) {
+                        background-color: #fcfcfc; 
+                    }
+                    th{
+                        background: #f1f1f1;
+                    }
+                    td{
+                        border-top:none !important;
+                        border-bottom:1px solid #fafafa !important;
+                    }
+                }
+            }
+
+            .treeBtn{
+                display: flex;margin-bottom: 20px;
+            }
+            .delBtn{
+                background-color:#aa0d0d;color:#fff;
+            }
+
+            .adminPagination{
+                display: flex;justify-content: space-between;
+                padding: 10px; border-radius: 0 0 8px 8px;
+            }
+        }
+    }
+    
+}
+
