@@ -26,8 +26,7 @@
                     }" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key === 'status'">
-                            <a-tag v-if="record.status==1" color="green">开启</a-tag>
-                            <a-tag v-else color="red">关闭</a-tag>
+                            <a-switch v-model:checked="record.statusB" size="small" @click="StatusRecord(record)" />
                         </template>
                         <template v-else-if="column.key === 'action'">
                         <span>
@@ -36,13 +35,20 @@
                             <a @click="onRole(record)">角色</a>
                         </span>
                         </template>
+                        <template v-else-if="column.key === 'roles'">
+                            <span>
+                            <a-tag v-for="tag in record.roles" :key="tag"  color="volcano">
+                                {{ tag }}
+                            </a-tag>
+                            </span>
+                        </template>
                     </template>
                 </a-table>
                 <div class="adminPagination" >
-                    <a-button type="primary" size="small" :disabled="!hasSelected" :loading="del.loading" @click="delRecord">
-                        删除
-                    </a-button>
-                    <a-pagination v-model:current="table.page" :total="table.count" show-less-items size="small" @change="getList"/>
+                    <a-popconfirm title="确认删除吗?" @confirm="delRecord" ok-text="确认" cancel-text="取消" :disabled="!hasSelected">
+                        <a-button  size="small"  :disabled="!hasSelected" :loading="del.loading" >删除</a-button>
+                    </a-popconfirm>
+                    <a-pagination :showSizeChanger="false" v-model:current="table.page" :total="table.count" show-less-items size="small" @change="getList"/>
                 </div>
             </div>
         </div>
@@ -83,6 +89,11 @@
                 dataIndex: 'nickname',
             },
             {
+                title: '角色',
+                key: 'roles',
+                dataIndex: 'roles',
+            },
+            {
                 title: '状态',
                 key: 'status',
             },
@@ -91,6 +102,7 @@
                 key: 'action',
             }
         ],
+        manager_role:[]
     })
 
     let del = reactive({
@@ -111,11 +123,24 @@
                 res.msg
             );
         }
-        let newArray = res.data.list.map(obj => {
-            return { ...obj, key: obj.id };
-        });
-        table.data = newArray
+        let uidRole = {}
+        Object.keys(res.data.manager_role).forEach(key=>{
+            uidRole[key] = []
+            res.data.manager_role[key].forEach(i=>{
+                uidRole[key].push(i.Role.title)
+            })
+        })
+        //console.log(uidRole)
+        if(res.data.list){
+            table.data = res.data.list.map(obj => {
+                return { ...obj, key: obj.uid ,statusB: obj.status===1?true:false ,roles:uidRole[obj.uid]};
+            });
+        }else{
+            table.data = []
+        }
+        
         table.count = res.data.count
+        table.manager_role = res.data.manager_role
     }
 
     let drawerForm = reactive({
@@ -141,13 +166,11 @@
     })
 
     async function onRole(record){
-        let res = await request.get("/admin/system/perm/manager/role",{params:{manager_uid:record.uid} })
-        if (res.code){
-            return message.info(
-                res.msg
-            );
+        if(record.uid in table.manager_role){
+            drawerRole.manager_role = table.manager_role[record.uid]
+        }else{
+            drawerRole.manager_role = []
         }
-        drawerRole.manager_role = res.data.manager_role
         drawerRole.manager_uid = record.uid
         drawerRole.open=true;
         drawerRole.username=record.username;
@@ -156,11 +179,22 @@
     function draweRoleClose(b){
         drawerRole.record = {}
         drawerRole.open=b
+        getList()
     }
 
     async function delRecord(){
-        let params = {ids:del.selectedRowKeys }
-        let res = await request.get("/admin/system/perm/manager/del",{params })
+        let res = await request.post("/admin/system/perm/manager/del",{ids:del.selectedRowKeys})
+        if (res.code){
+            return message.info(
+                res.msg
+            );
+        }else{
+            getList()
+        }
+    }
+
+    async function StatusRecord(record){
+        let res = await request.post("/admin/system/perm/manager/status",{uid:record.uid,status:record.status?0:1 })
         if (res.code){
             return message.info(
                 res.msg

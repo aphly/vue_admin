@@ -2,10 +2,7 @@
     <div>
         <a-drawer
             :title="drawer.form.uid?'编辑':'新增'"
-            :width="720"
             :open="props.open"
-            :body-style="{ paddingBottom: '80px' }"
-            :footer-style="{ textAlign: 'right' }"
             @close="drawerClose"
             @afterOpenChange = "afterOpenChange"
         >
@@ -39,9 +36,6 @@
                 <a-form-item label="描述">
                     <a-input v-model:value="drawer.form.note"  />
                 </a-form-item>
-                <a-form-item label="状态">
-                    <a-switch v-model:checked="drawer.form.status" />
-                </a-form-item>
             </a-form>
             <template #extra>
             <a-space>
@@ -74,7 +68,6 @@
         phone:'',
         note:'',
         password:'',
-        status:true,
         level_id:'',
     }
 
@@ -106,7 +99,7 @@
     });
 
     const save = async() => {
-        let saveData = {...drawer.form,status:drawer.form.status?1:0,level_id:parseInt(drawer.form.level_id)}
+        let saveData = {...drawer.form,level_id:parseInt(drawer.form.level_id)}
         if(props.record.uid){
             let res = await request.post("/admin/system/perm/manager/edit",saveData)
             if (res.code){

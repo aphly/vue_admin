@@ -41,10 +41,10 @@
                     </template>
                 </a-table>
                 <div class="adminPagination" style="display: flex;justify-content: space-between;">
-                    <a-button type="primary" size="small" :disabled="!hasSelected" :loading="del.loading" @click="delRecord">
-                        删除
-                    </a-button>
-                    <a-pagination v-model:current="table.page" :total="table.count" show-less-items size="small" @change="getList"/>
+                    <a-popconfirm title="确认删除吗?" @confirm="delRecord" ok-text="确认" cancel-text="取消" :disabled="!hasSelected">
+                        <a-button  size="small"  :disabled="!hasSelected" :loading="del.loading" >删除</a-button>
+                    </a-popconfirm>
+                    <a-pagination :showSizeChanger="false" v-model:current="table.page" :total="table.count" show-less-items size="small" @change="getList"/>
                 </div>
                 
             </div>
@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-    import {onMounted,reactive,ref, watch,computed,onBeforeMount} from "vue"
+    import {onMounted,reactive,computed} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
     import  {allToSelect}  from '@/helper/tree.js';
@@ -117,10 +117,13 @@
                 res.msg
             );
         }
-        let newArray = res.data.list.map(obj => {
-            return { ...obj, key: obj.id,level_title: obj.Level.title };
-        });
-        table.data = newArray
+        if(res.data.list){
+            table.data = res.data.list.map(obj => {
+                return { ...obj, key: obj.id,level_title: obj.Level.title };
+            });
+        }else{
+            table.data = []
+        }
         table.count = res.data.count
     }
 
@@ -189,8 +192,7 @@
     }
 
     async function delRecord(){
-        let params = {ids:del.selectedRowKeys }
-        let res = await request.get("/admin/system/perm/role/del",{params })
+        let res = await request.post("/admin/system/perm/role/del",{ids:del.selectedRowKeys })
         if (res.code){
             return message.info(
                 res.msg

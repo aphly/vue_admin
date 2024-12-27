@@ -12,28 +12,13 @@
                         <a-input :disabled="true" v-model:value="drawer.form.id" />
                     </a-form-item>
                 </div>
-                <a-form-item label="名称">
+                <a-form-item label="名称" name="title">
                     <a-input v-model:value="drawer.form.title" placeholder="名称" />
                 </a-form-item>
-                <a-form-item label="描述">
-                    <a-input v-model:value="drawer.form.desc" placeholder="描述" />
+                <a-form-item label="name" name="name">
+                    <a-input v-model:value="drawer.form.name" placeholder="name" />
                 </a-form-item>
-                <a-form-item label="数据权限" >
-                    <a-radio-group v-model:value="drawer.form.data_perm">
-                        <a-radio-button value="1">自己</a-radio-button>
-                        <a-radio-button value="2">本级</a-radio-button>
-                        <a-radio-button value="3">本级以及下级</a-radio-button>
-                    </a-radio-group>
-                </a-form-item>
-                <a-form-item label="层级">
-                    <a-tree-select
-                        v-model:value="drawer.form.level_id"
-                        :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                        placeholder="请选择"
-                        :tree-data="drawer.levelTreeData"
-                    >
-                    </a-tree-select>
-                </a-form-item>
+                
                 <a-form-item label="排序">
                     <a-input-number v-model:value="drawer.form.sort" :min="0" :max="10000" />
                 </a-form-item>
@@ -52,12 +37,12 @@
 </template>
 
 <script setup>
-    import {reactive,defineEmits,ref ,onBeforeMount} from "vue"
+    import {reactive,defineEmits,ref } from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
 
     const formRef = ref(null);
-    let props =  defineProps(['record','open','levelTreeData'])
+    let props =  defineProps(['record','open'])
 
     const emit = defineEmits(['drawe_close']);
    
@@ -68,27 +53,25 @@
     let initForm = {
         id:0,
         title: '',
-        desc:'',
-        pid:0,
-        data_perm:'1',
+        name:'',
         sort:0,
         status:true,
-        level_id:'',
     }
 
     const drawer = reactive({
         open:false,
-        form:{...initForm},
+        form:initForm,
         rules : {
+            title: [
+                {
+                required: true,
+                message: '请输入名称',
+                },
+            ],
             name: [
                 {
                 required: true,
-                message: 'Please enter user name',
-                },
-            ],
-            sort: [
-                {
-                message: 'Please enter user name',
+                message: '请输入name',
                 },
             ],
         },
@@ -96,9 +79,9 @@
     });
 
     const save = async() => {
-        let saveData = {...drawer.form,status:drawer.form.status?1:0,data_perm:parseInt(drawer.form.data_perm),level_id:parseInt(drawer.form.level_id)}
+        let saveData = {...drawer.form,status:drawer.form.status?1:0}
         if(props.record.id){
-            let res = await request.post("/admin/system/perm/role/edit",saveData)
+            let res = await request.post("/admin/system/op/dict/edit",saveData)
             if (res.code){
                 return message.info(
                     res.msg
@@ -107,7 +90,7 @@
                 drawerClose()
             }
         }else{
-            let res = await request.post("/admin/system/perm/role/add",saveData)
+            let res = await request.post("/admin/system/op/dict/add",saveData)
             if (res.code){
                 return message.info(
                     res.msg
@@ -124,7 +107,7 @@
         if(props.record.id){
             drawer.form = props.record
         }else{
-            drawer.form = {...initForm}
+            drawer.form ={...initForm}
         }
         if(!b){
             formRef.value.resetFields()

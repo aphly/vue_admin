@@ -2,10 +2,7 @@
     <div>
         <a-drawer
             :title="props.username+' 角色'"
-            :width="720"
             :open="props.open"
-            :body-style="{ paddingBottom: '80px' }"
-            :footer-style="{ textAlign: 'right' }"
             @close="drawerRoleClose"
             @afterOpenChange = "afterOpenChange"
         >
@@ -76,6 +73,7 @@
     function afterOpenChange(b){
         if(props.manager_role.length>0){
             let ids = [...new Set(props.manager_role.map(item => String(item.role_id)))];
+            console.log(ids)
             drawer.checkedKeys = ids
         }
         if(!b){
@@ -91,6 +89,8 @@
             drawer.expandedKeys = drawer.treeData.map((item)=>{
                 return item.key
             })
+        }else{
+            return message.info(res.msg)
         }
     })
     

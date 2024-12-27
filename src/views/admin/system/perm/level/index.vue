@@ -8,6 +8,9 @@
             </div>
             <div class="listBox">
                 <div class="treeBtn">
+                    <a-button type="primary" @click="rebuildBtn" style="margin-right: 20px;">
+                        重建路径
+                    </a-button>
                     <a-button type="primary" @click="addBtn" v-show="tree.btn.add" style="margin-right: 20px;">
                         新增
                     </a-button>
@@ -145,7 +148,7 @@
 
     async function delBtn(){
         if(tree.record.id){
-            let res = await request.get("/admin/system/perm/level/del",{params:{'ids[]':tree.record.id}})
+            let res = await request.post("/admin/system/perm/level/del",{ids:[tree.record.id]})
             if(!res.code){
                 message.success(
                     res.msg
@@ -194,6 +197,21 @@
             list = res.data.list
             treeData.value = allToTree(list)
             //console.log(treeData,list)
+        }else{
+            return message.info(res.msg)
+        }
+    }
+
+    async function rebuildBtn(){
+        let res = await request.post("/admin/system/perm/level/rebuild")
+        if(!res.code){
+            message.success(
+                res.msg
+            );
+        }else{
+            message.info(
+                res.msg
+            );
         }
     }
     

@@ -196,7 +196,7 @@
 
     async function delBtn(){
         if(tree.record.id){
-            let res = await request.get("/admin/system/perm/menu/del",{params:{'ids[]':tree.record.id}})
+            let res = await request.post("/admin/system/perm/menu/del",{'ids':[tree.record.id]})
             if(!res.code){
                 message.success(
                     res.msg

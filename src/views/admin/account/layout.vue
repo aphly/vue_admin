@@ -110,6 +110,7 @@
       } 
       let os_keys = OpenKeysSelectedKeysByTree(router.currentRoute.value.path,role_menu)
       openKeys.value = os_keys[0]
+      
       selectedKeys.value = os_keys[1] 
       
  		})

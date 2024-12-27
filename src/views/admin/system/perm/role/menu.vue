@@ -2,10 +2,7 @@
     <div>
         <a-drawer
             :title="props.title+' 菜单'"
-            :width="720"
             :open="props.open"
-            :body-style="{ paddingBottom: '80px' }"
-            :footer-style="{ textAlign: 'right' }"
             @close="drawerMenuClose"
             @afterOpenChange = "afterOpenChange"
         >

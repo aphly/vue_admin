@@ -1,8 +1,8 @@
 <template>
     <div class="adminMain">
         <RouterTitle></RouterTitle>
-        <div style="display: flex;justify-content: space-between;">
-            <div style="width: 40%;" class="list_tree">
+        <div class="mainContext">
+            <div class="treeBox">
                 <a-tree
                     :tree-data="treeData"
                     v-model:selectedKeys="selectedKeys"
@@ -11,7 +11,7 @@
                 </a-tree>
             </div>
             
-            <div style="width:calc(60% - 20px);margin-left:20px;">
+            <div class="listBox">
                 <div class="treeBtn">
                     <a-button type="primary" @click="addBtn" v-show="tree.btn.add" style="margin-right: 20px;">
                         新增
@@ -195,6 +195,7 @@
             }
         }
     }
+
     
     async function saveForm(){
         let saveData = {...tree.form,type:parseInt(tree.form.type),status:tree.form.status?1:0}
