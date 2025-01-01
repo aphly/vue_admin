@@ -1,7 +1,7 @@
 <template>
     <div class="adminMain">
-      <div class="adminMainTitle">个人中心</div>
-      <a-form :model="form" class="box">
+      <div class="adminMainTitle">个人资料</div>
+      <a-form :model="form" class="box" layout="vertical">
         <a-form-item label="用户名">
           <a-input :value="manager.info.username" :disabled="true"/>
         </a-form-item>

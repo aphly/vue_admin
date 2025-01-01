@@ -30,6 +30,9 @@
                             {{ record.created_at_format }}
                         </span>
                         </template>
+                        <template v-if="column.key === 'status'">
+                            <a-switch v-model:checked="record.statusB" size="small" @click="StatusRecord(record)" />
+                        </template>
                     </template>
                 </a-table>
                 <div class="adminPagination" >
@@ -75,6 +78,10 @@
                 dataIndex: 'name',
             },
             {
+                title: '状态',
+                key: 'status',
+            },
+            {
                 title: '操作',
                 key: 'action',
             }
@@ -101,7 +108,7 @@
         }
         if(res.data.list){
             table.data = res.data.list.map(obj => {
-                return { ...obj, key: obj.id};
+                return { ...obj, key: obj.id,statusB: obj.status===1?true:false };
             });
         }else{
             table.data = []
@@ -115,7 +122,7 @@
     })
 
     function onEdit(record){
-        drawerForm.record = {...record,key_input:record.key}
+        drawerForm.record = {...record}
         drawerForm.open=true;
     }
 
@@ -143,6 +150,17 @@
 
     async function delRecord(){
         let res = await request.post("/admin/system/op/dict/del",{ids:del.selectedRowKeys })
+        if (res.code){
+            return message.info(
+                res.msg
+            );
+        }else{
+            getList()
+        }
+    }
+
+    async function StatusRecord(record){
+        let res = await request.post("/admin/system/op/dict/status",{id:record.id,status:record.status?0:1 })
         if (res.code){
             return message.info(
                 res.msg

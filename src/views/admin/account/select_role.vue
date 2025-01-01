@@ -1,5 +1,8 @@
 <template>
   <div class="selectRole">
+    <div class="loginStatus1" @click="router.push('/admin/account/index')" style="cursor: pointer;margin-bottom: 10px;">
+        {{ manager.info.username }}
+    </div>
     <div class="text">请选择角色</div>
     <ul >
       <li v-for="item,key in list" :key="key" >
@@ -7,9 +10,6 @@
       </li>
     </ul>
     <div class="loginStatus">
-      <div class="loginStatus1">
-        {{ manager.info.username }}
-      </div>
       <div class="loginStatus2" >
         <a-button @click="manager.logout();router.push('/admin/login')">退出</a-button>
       </div>

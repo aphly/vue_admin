@@ -21,7 +21,7 @@ a:hover {
         position: relative;
         .adminLogo{
             height: 64px;line-height: 64px;text-align: center;font-size: 18px;font-weight: 600;
-            border-right: 1px solid #f1f1f1;
+            border-right: 1px solid #f1f1f1;cursor: pointer;
         }
 
         .adminMenu{
@@ -113,7 +113,7 @@ a:hover {
                 color: #2b2b2b;
                 font-weight: 600;
                 border-bottom: 1px solid #eee;
-                margin-bottom: 15px;
+                margin-bottom: 10px;padding-bottom: 10px;
                 height: 30px;
                 display: flex;
                 justify-content: space-between;
@@ -211,4 +211,16 @@ table {
 .adminPagination{
     display: flex;justify-content: space-between;
     padding: 10px; border-radius: 0 0 8px 8px;
+}
+
+.adminList{
+    .adminLi{
+        display: flex;justify-content: space-between;width: 100%;cursor: pointer;
+        .ant-tag{
+            margin-right: 10px;
+        }
+        .adminTime{
+            color:#999;
+        }
+    }
 }

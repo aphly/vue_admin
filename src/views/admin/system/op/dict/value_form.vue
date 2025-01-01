@@ -1,12 +1,8 @@
 <template>
     <div>
-        <a-drawer
-            :title="drawer.form.id?'编辑':'新增'"
-            :open="props.open"
-            @close="drawerValueFormClose"
-            @afterOpenChange = "afterOpenChange"
-        >
-            <a-form ref="formRef" :model="drawer.form" :rules="drawer.rules" layout="vertical">
+        <a-modal v-model:open="open" :title="drawer.form.id?'编辑':'新增'" @cancel="drawerValueFormClose" :footer="null">
+
+            <a-form ref="VformRef" :model="drawer.form" :rules="drawer.rules" layout="vertical">
                 <div v-if="drawer.form.id">
                     <a-form-item label="Id" name="id">
                         <a-input :disabled="true" v-model:value="drawer.form.id" />
@@ -22,21 +18,20 @@
                     <a-input-number v-model:value="drawer.form.sort" :min="0" :max="10000" />
                 </a-form-item>
             </a-form>
-            <template #extra>
-            <a-space>
+            <div>
                 <a-button type="primary" @click="save">保存</a-button>
-            </a-space>
-            </template>
-        </a-drawer>
+            </div>
+            
+        </a-modal>
     </div>
 </template>
 
 <script setup>
-    import {reactive,defineEmits,ref } from "vue"
+    import {reactive,defineEmits,ref,onMounted,onUnmounted, watch} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
 
-    const formRef = ref(null);
+    const VformRef = ref(null);
     let props =  defineProps(['record','open'])
 
     const emit = defineEmits(['drawe_value_form_close']);
@@ -44,6 +39,8 @@
     function drawerValueFormClose(){
         emit('drawe_value_form_close', false);
     }
+
+    let open = ref(false)
 
     let initForm = {
         id:0,
@@ -92,19 +89,31 @@
         drawerValueFormClose()
     };
 
-    function afterOpenChange(b){
-        if(props.record.id){
-            drawer.form = props.record
+    watch(() => props.open, (newVal, oldVal) => {
+        if(newVal){
+            open.value = true
+            if(props.record.id){
+                drawer.form = props.record
+            }else{
+                drawer.form = {...initForm}
+                drawer.form.dict_id = props.record.dict_id
+            }
         }else{
-            drawer.form = {...initForm}
-            drawer.form.dict_id = props.record.dict_id
+            open.value = false
+            VformRef.value.resetFields()
         }
-        if(!b){
-            formRef.value.resetFields()
-        }
-    }
+    })
 
-    
+    // onMounted(()=>{
+    //     console.log("open")
+    //     
+    // })
+
+    // onUnmounted(()=>{
+    //     console.log("close")
+    //    
+    // })
+   
 </script>
 
 <style lang="scss" scoped>

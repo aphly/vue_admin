@@ -73,7 +73,6 @@
     function afterOpenChange(b){
         if(props.manager_role.length>0){
             let ids = [...new Set(props.manager_role.map(item => String(item.role_id)))];
-            console.log(ids)
             drawer.checkedKeys = ids
         }
         if(!b){

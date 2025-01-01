@@ -89,6 +89,10 @@
                 dataIndex: 'nickname',
             },
             {
+                title: '层级',
+                dataIndex: 'level_title',
+            },
+            {
                 title: '角色',
                 key: 'roles',
                 dataIndex: 'roles',
@@ -133,7 +137,7 @@
         //console.log(uidRole)
         if(res.data.list){
             table.data = res.data.list.map(obj => {
-                return { ...obj, key: obj.uid ,statusB: obj.status===1?true:false ,roles:uidRole[obj.uid]};
+                return { ...obj, key: obj.uid ,statusB: obj.status===1?true:false ,roles:uidRole[obj.uid],level_title:obj.Level.title};
             });
         }else{
             table.data = []

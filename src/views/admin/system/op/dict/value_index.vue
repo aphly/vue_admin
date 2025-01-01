@@ -1,5 +1,5 @@
 <template>
-    <div class="w900">
+    <div >
         <a-drawer :title="props.record.title"
             :open="props.open"
             @close="drawerValueClose"
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-    import {reactive,computed} from "vue"
+    import {reactive,defineEmits,computed} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
     

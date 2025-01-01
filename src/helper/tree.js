@@ -139,7 +139,7 @@ function treeChildren(tree,path,arr=[],level=1) {
         }
         arr.push(tree[i].Menu.name) 
       }
-      console.log("ok:",tree[i].Menu.path,arr,level)
+      //console.log("ok:",tree[i].Menu.path,arr,level)
       if(path==tree[i].Menu.path){
         return arr
       }
@@ -192,4 +192,72 @@ export function OpenKeysSelectedKeysByTree(path,role_menu){
       return [[],[defaultSelect]]
     }
     
+}
+
+export function routerToMenu(routerArr,name){
+  let menu = []
+  routerArr.forEach(i=>{
+    if(i.name==name){
+      menu = i.children
+    }
+  })
+  let res1 = []
+  routerTreeChildren(menu,res1)
+  return res1
+};
+
+export function OpenKeysSelectedKeysByRouter(path,tree){
+  let res = ret1(tree,path)
+  if(res[0]){
+      let OpenKeys = res[0].split('.')
+      return [OpenKeys,[res[1]]]
+  }else{
+    if(res[1]){
+      return [[''],[res[1]]]
+    }else{
+      return [[''],['account_index']]
+    }
+  }
+}
+
+function ret1(tree,path){
+  let res= [];
+  let recursiveArrayTraversal = (tree,path,parentKey = '')=>{
+      for (let i = 0; i < tree.length; i++) {
+          let item = tree[i]
+          if(path==item.path){
+              res= [parentKey,item.name]
+          }
+          const key = parentKey !== '' ? `${parentKey}.${item.name}` : `${item.name}`;
+          if (item.children && item.children.length>0) {
+              recursiveArrayTraversal(item.children,path, key);
+          }
+      }
+  }
+  recursiveArrayTraversal(tree,path)
+  return res
+}
+
+function routerTreeChildren(tree,res=[]) {
+  for (let i = 0; i < tree.length; i++) {
+    res[i] = {key:tree[i].name,name:tree[i].name,label:tree[i].meta.title,path:tree[i].path}
+    if (tree[i].children) {
+      res[i]['children'] =[]
+      routerTreeChildren(tree[i].children,res[i].children);
+    }
+  }
+}
+
+export function treeToList(tree) {
+  let list = [];
+  let traverse =(node)=> {
+    for (let i = 0; i < node.length; i++) {
+      list.push(node[i]);
+      if (node[i].children && node[i].children.length > 0) {
+        traverse(node[i].children);
+      }
+    }
+  }
+  traverse(tree);
+  return list;
 }

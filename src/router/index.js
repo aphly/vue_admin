@@ -18,15 +18,16 @@ const router = createRouter({
     {
       path: '/admin/layout',
       name: 'layout',
+      component: () => import('../views/admin/layout.vue'),
+      meta: { requiresAuth: true },
+      children:[]
+    },
+    {
+      path: '/admin/account/layout',
+      name: 'account_layout',
       component: () => import('../views/admin/account/layout.vue'),
       meta: { requiresAuth: true },
       children:[
-        {
-          path: '/admin/account/index',
-          name: 'index',
-          component: () => import('../views/admin/account/index.vue'),
-          meta: { requiresAuth: true }
-        },
       ]
     },
   ],

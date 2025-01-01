@@ -75,7 +75,6 @@
                 },
             ],
         },
-        levelTreeData:[]
     });
 
     const save = async() => {
@@ -103,7 +102,6 @@
     };
 
     function afterOpenChange(b){
-        drawer.levelTreeData = props.levelTreeData
         if(props.record.id){
             drawer.form = props.record
         }else{
