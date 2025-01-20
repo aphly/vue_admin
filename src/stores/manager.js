@@ -48,16 +48,26 @@ export const useManagerStore = defineStore('manager', {
 				localStorage.setItem('manager_token',JSON.stringify(managerToken))
 			}
 		},
-		login(managerInfo,token,manager_role) {
+		login(managerInfo,token) {
 			this.info = managerInfo;
 			this.loginStatus = true;
 			localStorage.setItem('manager_info',JSON.stringify(this.info))
 			this.token = token;
 			localStorage.setItem('manager_token',JSON.stringify(token))
-			localStorage.setItem("manager_role",JSON.stringify(manager_role))
 			this.avatar=this.info.avatar?this.info.avatar:'1.png'
 			localStorage.setItem('manager_avatar',this.avatar)
 		},
+		
+		saveRole(manager_role){
+			localStorage.setItem("manager_role",JSON.stringify(manager_role))
+		},
+		selectRole(role){
+			this.roleInfo=role
+		},
+		selectAvatar(avatar){
+			this.avatar=avatar
+		},
+
 		logout(){
 			this.loginStatus=false;
 			this.info={};
@@ -65,12 +75,6 @@ export const useManagerStore = defineStore('manager', {
 			this.roleInfo={}
 			this.avatar='1.png'
 			localStorage.clear()
-		},
-		selectRole(role){
-			this.roleInfo=role
-		},
-		selectAvatar(avatar){
-			this.avatar=avatar
 		},
 	},
 	

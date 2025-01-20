@@ -3,14 +3,7 @@
         <RouterTitle></RouterTitle>
         <div class="mainTop">
             <div class="searchBox">
-                <a-input v-model:value="table.search.uid" placeholder="uid"/>
-                <a-input v-model:value="table.search.username" placeholder="username"/>
-                <a-input v-model:value="table.search.phone" placeholder="手机号码"/>
-                <a-select v-model:value="table.search.status" >
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">开启</a-select-option>
-                    <a-select-option value="0">关闭</a-select-option>
-                </a-select>
+                <a-input v-model:value="table.search.title" placeholder="名称"/>
                 <a-button type="primary"  @click="searchData">搜索</a-button>
             </div>
             <div class="btnBox">
@@ -25,22 +18,24 @@
                 <a-table :dataSource="table.data" :columns="table.columns" :rowSelection="{selectedRowKeys: del.selectedRowKeys,onChange: onSelectChange
                     }" :pagination="false" size="small">
                     <template #bodyCell="{ column, record }">
-                        <template v-if="column.key === 'status'">
-                            <a-switch v-model:checked="record.statusB" size="small" @click="StatusRecord(record)" />
-                        </template>
-                        <template v-else-if="column.key === 'action'">
+                        <template v-if="column.key === 'action'">
                         <span>
                             <a @click="onEdit(record)">编辑</a>
                             <a-divider type="vertical" />
-                            <a @click="onRole(record)">角色</a>
                         </span>
                         </template>
-                        <template v-else-if="column.key === 'roles'">
-                            <span>
-                            <a-tag v-for="tag in record.roles" :key="tag"  color="volcano">
-                                {{ tag }}
-                            </a-tag>
-                            </span>
+                        <template v-if="column.key === 'created_at_format'">
+                        <span>
+                            {{ record.created_at_format }}
+                        </span>
+                        </template>
+                        <template v-if="column.key === 'dict_value_title'">
+                        <span>
+                            <a-tag :color="record.dict_value">{{ record.dict_value_title }}</a-tag>
+                        </span>
+                        </template>
+                        <template v-if="column.key === 'status'">
+                            <a-switch v-model:checked="record.statusB" size="small" @click="StatusRecord(record)" />
                         </template>
                     </template>
                 </a-table>
@@ -53,45 +48,43 @@
             </div>
         </div>
     </div>
-    <DrawerForm :record="drawerForm.record" :open="drawerForm.open" @drawe_close="draweClose"></DrawerForm>
-    <DrawerRole :manager_role="drawerRole.manager_role" :manager_uid="drawerRole.manager_uid"  :open="drawerRole.open" :username="drawerRole.username" @drawe_role_close="draweRoleClose"></DrawerRole>
+    <DrawerForm :record="drawerForm.record" :common="common" :open="drawerForm.open" @drawe_close="draweClose"></DrawerForm>
 </template>
 
 <script setup>
     import {onMounted, reactive,computed} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
-    import DrawerForm from '@/views/admin/system/perm/manager/form.vue';
-    import DrawerRole from '@/views/admin/system/perm/manager/role.vue';
+    
     import RouterTitle from '@/components/admin/RouterTitle.vue';
+    import DrawerForm from '@/views/admin/system/op/notice/form.vue';
+    import  {allToSelect}  from '@/helper/tree.js';
+    import  {arrToKeyObj}  from '@/helper/arr.js';
 
     let table = reactive({
         search:{
-            uid:'',
-            username:'',
-            status:'',
-            phone:""
+            title:'',
         },
         count :0,
         page : 1,
         data :[],
         columns:[
             {
-                title: 'UID',
-                dataIndex: 'uid',
+                title: 'ID',
+                dataIndex: 'id',
             },
             {
-                title: '用户名',
-                dataIndex: 'username',
+                title: '名称',
+                dataIndex: 'title',
             },
             {
-                title: '昵称',
-                dataIndex: 'nickname',
+                title: '类型',
+                key: 'dict_value_title',
+                dataIndex: 'dict_value_title',
             },
             {
-                title: '角色',
-                key: 'roles',
-                dataIndex: 'roles',
+                title: '层级',
+                dataIndex: 'level_title',
             },
             {
                 title: '状态',
@@ -101,8 +94,12 @@
                 title: '操作',
                 key: 'action',
             }
-        ],
-        manager_role:[]
+        ]
+    })
+
+    let common = reactive({
+        levelTreeData:[],
+        dictValueData:[],
     })
 
     let del = reactive({
@@ -117,30 +114,20 @@
     
     async function getList(search={}){
         let params = {page:table.page,...search}
-        let res = await request.get("/admin/system/perm/manager/index",{ params })
+        let res = await request.get("/admin/system/op/notice/index",{ params })
         if (res.code){
             return message.info(
                 res.msg
             );
         }
-        let uidRole = {}
-        Object.keys(res.data.manager_role).forEach(key=>{
-            uidRole[key] = []
-            res.data.manager_role[key].forEach(i=>{
-                uidRole[key].push(i.Role.title)
-            })
-        })
-        //console.log(uidRole)
         if(res.data.list){
             table.data = res.data.list.map(obj => {
-                return { ...obj, key: obj.uid ,statusB: obj.status===1?true:false ,roles:uidRole[obj.uid]};
+                return { ...obj, key: obj.id,statusB: obj.status===1?true:false, dict_value_title:common.dictValueData[obj.dict_value].title,level_title:obj.Level.title};
             });
         }else{
             table.data = []
         }
-        
         table.count = res.data.count
-        table.manager_role = res.data.manager_role
     }
 
     let drawerForm = reactive({
@@ -159,31 +146,8 @@
         getList()
     }
 
-    let drawerRole = reactive({
-        manager_role:[],
-        manager_uid:0,
-        open:false,
-    })
-
-    async function onRole(record){
-        if(record.uid in table.manager_role){
-            drawerRole.manager_role = table.manager_role[record.uid]
-        }else{
-            drawerRole.manager_role = []
-        }
-        drawerRole.manager_uid = record.uid
-        drawerRole.open=true;
-        drawerRole.username=record.username;
-    }
-
-    function draweRoleClose(b){
-        drawerRole.record = {}
-        drawerRole.open=b
-        getList()
-    }
-
     async function delRecord(){
-        let res = await request.post("/admin/system/perm/manager/del",{ids:del.selectedRowKeys})
+        let res = await request.post("/admin/system/op/notice/del",{ids:del.selectedRowKeys })
         if (res.code){
             return message.info(
                 res.msg
@@ -194,7 +158,7 @@
     }
 
     async function StatusRecord(record){
-        let res = await request.post("/admin/system/perm/manager/status",{uid:record.uid,status:record.status?0:1 })
+        let res = await request.post("/admin/system/op/notice/status",{id:record.id,status:record.status?0:1 })
         if (res.code){
             return message.info(
                 res.msg
@@ -208,9 +172,22 @@
         getList(table.search)
     }
 
-    onMounted(()=>{
+    onMounted(async()=>{
+        
+        let res = await request.get("/admin/system/perm/level/all")
+        if (!res.code){
+            common.levelTreeData = allToSelect(res.data.list)
+        }
+
+        let res1 = await request.get("/admin/dict/info?id=1")
+        if (!res1.code){
+            common.dictValueData = arrToKeyObj(res1.data.info.DictValue,'value')
+            //console.log(common.dictValueData)
+        }
+        
         getList()
     })
+
    
 </script>
 

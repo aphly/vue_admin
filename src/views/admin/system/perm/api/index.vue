@@ -6,7 +6,6 @@
                 <a-tree
                     :tree-data="treeData"
                     v-model:selectedKeys="selectedKeys"
-                    style="padding: 20px;"
                 >
                 </a-tree>
             </div>
@@ -182,7 +181,7 @@
 
     async function delBtn(){
         if(tree.record.id){
-            let res = await request.get("/admin/system/perm/api/del",{params:{'ids[]':tree.record.id}})
+            let res = await request.post("/admin/system/perm/api/del",{ids:[tree.record.id]})
             if(!res.code){
                 message.success(
                     res.msg

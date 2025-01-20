@@ -1,6 +1,12 @@
 <template>
     <div class="adminMain">
-      <div class="adminMainTitle">个人资料</div>
+      <div class="adminMainTitle" style="display: flex;justify-content: space-between;height: 50px;line-height: 50px;">
+        <div>个人资料</div>
+        <div>
+          <a-button class="adminBtn" @click="updateRole" style="margin-right: 20px;">更新面板角色</a-button>
+          <a-button class="adminBtn" @click="updateMenu" style="margin-right: 20px;">更新面板菜单</a-button>
+        </div>
+      </div>
       <a-form :model="form" class="box" layout="vertical">
         <a-form-item label="用户名">
           <a-input :value="manager.info.username" :disabled="true"/>
@@ -37,7 +43,6 @@
   
   <script setup>
       import {  ref,reactive } from 'vue';
-      import { useRouter } from 'vue-router';
       import { useManagerStore } from '@/stores/manager'
       import  request  from '@/helper/request.js';
       import { message } from 'ant-design-vue';
@@ -84,6 +89,30 @@
                 res.msg
             );
         }
+      }
+
+      async function updateRole(){
+        let res = await request.get("/admin/account/manager_role")
+        if(!res.code){
+            manager.saveRole(res.data.manager_role)
+        }
+        return message.info(
+            res.msg
+        );
+      }
+
+      async function updateMenu(){
+        let res = await request.get("/admin/account/role_menu")
+        if(!res.code){
+          let manager_role_menu = res.data.manager_role_menu
+          // manager_role_menu.sort(function (a, b) {
+          //   return b.Menu.sort - a.Menu.sort;
+          // });
+          localStorage.setItem("role_menu",JSON.stringify(manager_role_menu))
+        }
+        return message.info(
+            res.msg
+        );
       }
       
   </script>

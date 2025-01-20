@@ -32,9 +32,9 @@
     
     import  {treeToList,OpenKeysSelectedKeysByRouter}  from '@/helper/tree.js';
     const router = useRouter();
-    import  {menu}  from '@/router/account.js';
+    import  {adminAccountRouter}  from '@/router/account.js';
     
-    const roleMenu = ref(menu);
+    const roleMenu = ref(adminAccountRouter);
     const openKeys = ref([]);
     const selectedKeys = ref([]);
 
@@ -45,11 +45,11 @@
 
     onMounted(async()=>{
       
-      let list = treeToList(menu)
+      let list = treeToList(adminAccountRouter)
       const modules = import.meta.glob('/src/views/**/*.vue')
       list.forEach(item => {
         if(item.menuType==2){
-          router.addRoute("account_layout",{
+          router.addRoute("admin_account_layout",{
             path: item.path,
             name: item.name,
             component: modules[`/src/views${item.path}.vue`],

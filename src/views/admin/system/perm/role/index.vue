@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-    import {onMounted,reactive,computed} from "vue"
+    import {onMounted,reactive,computed,onBeforeMount} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
     import  {allToSelect}  from '@/helper/tree.js';
@@ -205,14 +205,18 @@
     function searchData(){
         getList(table.search)
     }
-
-    onMounted(async ()=>{
-        getList()
+    
+    onBeforeMount(async()=>{
         let res = await request.get("/admin/system/perm/level/all")
         if (!res.code){
             levelTreeData = allToSelect(res.data.list)
             //console.log(levelTreeData)
         }
+    })
+
+    onMounted(async ()=>{
+        getList()
+        
     })
 
     function onSelectLevel(keys){

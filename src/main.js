@@ -24,19 +24,21 @@ if(role_menu){
         }
     });
 }
+
 import  {treeToList}  from '@/helper/tree.js';
-import  {menu}  from '@/router/account.js';
-let list = treeToList(menu)
-list.forEach(item => {
+import  {adminAccountRouter}  from '@/router/account.js';
+let adminAccountRouterList = treeToList(adminAccountRouter)
+adminAccountRouterList.forEach(item => {
     if(item.menuType==2){
-        router.addRoute("account_layout",{
-        path: item.path,
-        name: item.name,
-        component: modules[`/src/views${item.path}.vue`],
-        meta: { requiresAuth: true }
+        router.addRoute("admin_account_layout",{
+            path: item.path,
+            name: item.name,
+            component: modules[`/src/views${item.path}.vue`],
+            meta: { requiresAuth: true }
         })
     }
 });
+
 
 const app = createApp(App)
 

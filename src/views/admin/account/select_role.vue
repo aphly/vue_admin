@@ -19,19 +19,28 @@
 </template>
 
 <script setup>
-    import {  ref } from 'vue';
+    import {  ref,onBeforeMount } from 'vue';
     import { useRouter } from 'vue-router';
     import { useManagerStore } from '@/stores/manager'
+    import  request  from '@/helper/request.js';
     let router = useRouter();
     let manager = useManagerStore()
-    let manager_role = JSON.parse(localStorage.getItem("manager_role"))
-    const list = ref(manager_role);
+    
+    const list = ref({});
     async function chooseRole(role){
       localStorage.setItem("manager_role_info",JSON.stringify(role))
       manager.selectRole(role)
       router.push('/admin/layout')
     }
-    
+
+    onBeforeMount(async()=>{
+      let res = await request.get("/admin/account/manager_role")
+      if(!res.code){
+          manager.saveRole(res.data.manager_role)
+          list.value = res.data.manager_role
+      }
+    })
+
 </script>
 
 <style lang="scss" scoped>

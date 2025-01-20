@@ -76,7 +76,7 @@ export function itemHasChild(list,id){
 
 function leafChildren(tree) {
   for (let i = 0; i < tree.length; i++) {
-    tree[i].class="tree_type_"+tree[i].type
+    tree[i].class="tree_type_"+tree[i].type+" tree_status"+tree[i].status
     if (tree[i].children && tree[i].children.length === 0) {
       delete tree[i].children;
       if(tree[i].pid){
@@ -110,10 +110,50 @@ export function listToMenu(list) {
     removeEmptyChildren(newTree)
     return newTree
 }
+
+export function frontListToMenu(list) {
+  let menu = {};
+  list.forEach(item => {
+    menu[item.id] = { children: [],key:String(item.id),label:item.title,pid:item.pid};
+  });
+  list.forEach(item => {
+    const parent = menu[item.pid];
+    if (parent) {
+      parent.children.push(menu[item.id]);
+    }
+  });
+  let newTree = Object.values(menu).filter(item => item.pid === 0);
+  frontRemoveEmptyChildren(newTree)
+  return newTree
+}
+
+function frontRemoveEmptyChildren(tree) {
+  // 遍历当前节点数组
+  for (let i = 0; i < tree.length; i++) {
+    tree.sort(function (a, b) {
+      return b.sort - a.sort;
+    });
+    // 如果当前节点的children属性是空数组，则删除该节点
+    if (tree[i].children && tree[i].children.length === 0 ) {
+      delete tree[i].children;
+    }
+    // 递归检查并处理当前节点的子节点
+    if (tree[i].children) {
+      removeEmptyChildren(tree[i].children);
+      // 如果子节点处理后变成空数组，则删除子节点引用
+      if (tree[i].children.length === 0 ) {
+        delete tree[i].children;
+      }
+    }
+  }
+}
    
 function removeEmptyChildren(tree) {
     // 遍历当前节点数组
     for (let i = 0; i < tree.length; i++) {
+      tree.sort(function (a, b) {
+        return b.Menu.sort - a.Menu.sort;
+      });
       // 如果当前节点的children属性是空数组，则删除该节点
       if (tree[i].children && tree[i].children.length === 0 || tree[i].type!=1) {
         delete tree[i].children;

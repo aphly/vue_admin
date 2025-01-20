@@ -7,27 +7,32 @@
             @afterOpenChange = "afterOpenChange"
         >
             <a-form ref="formRef" :model="drawer.form" :rules="drawer.rules" layout="vertical">
-                <div v-if="drawer.form.id">
-                    <a-form-item label="Uid" >
+                
+                <div v-if="drawer.form.uid">
+                    <a-form-item label="Uid" name="uid">
                         <a-input :disabled="true" v-model:value="drawer.form.uid" />
                     </a-form-item>
+                    <ul >
+                        <li style="display: flex;" v-for="v,k in props.record.UserAuth" :key="k"><div>{{ v.id_type }} : </div><div>{{ v.id }}</div></li>
+                    </ul>
                 </div>
-                <a-form-item label="用户名" name="username">
-                    <a-input v-model:value="drawer.form.username" placeholder="用户名" />
+
+                <a-form-item v-if="!drawer.form.uid" label="手机号码" name="id">
+                    <a-input v-model:value="drawer.form.id" placeholder="手机号码" />
                 </a-form-item>
+
                 <a-form-item label="昵称" name="nickname">
                     <a-input v-model:value="drawer.form.nickname" placeholder="昵称" />
                 </a-form-item>
-                <a-form-item label="手机号码">
-                    <a-input v-model:value="drawer.form.phone" placeholder="手机号码" />
-                </a-form-item>
+
                 <a-form-item label="密码" name="password">
                     <a-input v-model:value="drawer.form.password" placeholder="密码" />
                 </a-form-item>
                 
-                <a-form-item label="描述">
-                    <a-input v-model:value="drawer.form.note"  />
+                <a-form-item label="状态">
+                    <a-switch v-model:checked="drawer.form.status" />
                 </a-form-item>
+
             </a-form>
             <template #extra>
             <a-space>
@@ -39,53 +44,43 @@
 </template>
 
 <script setup>
-    import {reactive,defineEmits,ref ,onBeforeMount} from "vue"
+    import {reactive,defineEmits,ref} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
-    import  {allToSelect}  from '@/helper/tree.js';
 
     const formRef = ref(null);
     let props =  defineProps(['record','open'])
 
     const emit = defineEmits(['drawe_close']);
-   
+
     function drawerClose(){
         emit('drawe_close', false);
     }
 
     let initForm = {
+        id:'',
         uid:'',
-        username: '',
-        nickname:'',
-        phone:'',
-        note:'',
+        nickname: '',
         password:'',
+        status:true,
     }
 
     const drawer = reactive({
-        open:false,
         form:initForm,
         rules : {
-            username: [
+            id: [
                 {
-                    required: true,
-                    message: '请输入用户名',
-                },
-            ],
-           
-            nickname: [
-                {
-                    required: true,
-                    message: '请输入昵称',
+                required: true,
+                message: '手机号码',
                 },
             ],
         },
     });
 
     const save = async() => {
-        let saveData = {...drawer.form}
+        let saveData = {...drawer.form,status:drawer.form.status?1:0}
         if(props.record.uid){
-            let res = await request.post("/admin/system/perm/manager/edit",saveData)
+            let res = await request.post("/common/user/edit",saveData)
             if (res.code){
                 return message.info(
                     res.msg
@@ -94,7 +89,7 @@
                 drawerClose()
             }
         }else{
-            let res = await request.post("/admin/system/perm/manager/add",saveData)
+            let res = await request.post("/common/user/add",saveData)
             if (res.code){
                 return message.info(
                     res.msg
@@ -110,19 +105,13 @@
         if(props.record.uid){
             drawer.form = props.record
         }else{
-            drawer.form = initForm
+            drawer.form ={...initForm}
         }
         if(!b){
             formRef.value.resetFields()
         }
     }
 
-    // onBeforeMount(async()=>{
-    //     let res = await request.get("/admin/system/perm/level/all")
-    //     if (!res.code){
-    //         drawer.levelTreeData = allToSelect(res.data.list)
-    //     }
-    // })
     
 </script>
 

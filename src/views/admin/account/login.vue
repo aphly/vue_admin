@@ -47,11 +47,11 @@
       password: '',
     });
     let router = useRouter();
-    const managerStore = useManagerStore()
+    const manager = useManagerStore()
     async function login(){
         let res = await request.post("/admin/login",form)
         if(!res.code){
-            managerStore.login(res.data.manager,res.data.token,res.data.manager_role)
+            manager.login(res.data.manager,res.data.token,res.data.manager_role)
             message.success(
                 res.msg
             );

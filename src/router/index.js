@@ -7,26 +7,27 @@ const router = createRouter({
     {
       path: '/admin/login',
       name: 'login',
-      component: () => import('../views/admin/account/login.vue'),
+      component: () => import('@/views/admin/account/login.vue'),
+      meta: { title: "管理中心" }
     },
     {
       path: '/admin/select_role',
       name: 'select_role',
-      component: () => import('../views/admin/account/select_role.vue'),
-      meta: { requiresAuth: true }
+      component: () => import('@/views/admin/account/select_role.vue'),
+      meta: { requiresAuth: true,title: "管理中心" }
     },
     {
       path: '/admin/layout',
       name: 'layout',
-      component: () => import('../views/admin/layout.vue'),
-      meta: { requiresAuth: true },
+      component: () => import('@/views/admin/layout.vue'),
+      meta: { requiresAuth: true,title: "管理中心" },
       children:[]
     },
     {
       path: '/admin/account/layout',
-      name: 'account_layout',
-      component: () => import('../views/admin/account/layout.vue'),
-      meta: { requiresAuth: true },
+      name: 'admin_account_layout',
+      component: () => import('@/views/admin/account/layout.vue'),
+      meta: { requiresAuth: true,title: "管理中心" },
       children:[
       ]
     },
@@ -34,6 +35,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from,next) => {
+  if (to.meta && to.meta.title) {
+    document.title = to.meta.title;
+  }
+
   const manager = useManagerStore()
   if(to.path=='/admin/login' && manager.loginStatus){
     next({

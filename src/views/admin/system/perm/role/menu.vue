@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-    import {reactive,defineEmits ,onBeforeMount} from "vue"
+    import {reactive,defineEmits ,onBeforeMount, nextTick} from "vue"
     import request  from "@/helper/request";
     import { message } from 'ant-design-vue';
     import  {allToTree}  from '@/helper/tree.js';
@@ -47,7 +47,7 @@
         halfcheckKeys:[],
         expandedKeys:[]
     });
-
+    
     const save = async() => {
         let checkedKeys = drawer.checkedKeys.map((item)=>{
             return parseInt(item)
@@ -56,6 +56,7 @@
             return parseInt(item)
         })
         let saveData = {checked_keys:checkedKeys,halfcheck_keys:halfcheckKeys}
+        //console.log(saveData)
         let res = await request.post("/admin/system/perm/role/menu?role_id="+props.role_id,saveData)
         if (res.code){
             return message.info(
@@ -82,7 +83,7 @@
     }
 
     onBeforeMount(async()=>{
-        let res = await request.get("/admin/system/perm/menu/all")
+        let res = await request.get("/admin/system/perm/menu/all?status=1")
         if (!res.code){
             drawer.treeData = allToTree(res.data.list)
             drawer.expandedKeys = drawer.treeData.map((item)=>{
@@ -94,13 +95,5 @@
 </script>
 
 <style lang="scss" scoped>
-.list_tree {
-   :deep(.ant-tree-list-holder-inner)   {
-    display: inline-block !important;
-  }
-  :deep(.tree_leaf) {
-    display: inline-flex !important;
-    margin-right: 20px;
-  }
-}
+
 </style>

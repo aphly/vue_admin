@@ -35,7 +35,7 @@ a:hover {
             .ant-menu-item:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected){
                 background-color: transparent;
                 .ant-menu-title-content{
-                    font-weight: 700;
+                    font-weight: 600;
                     color: var(--c_color);
                 }
             }
@@ -50,12 +50,12 @@ a:hover {
             }
             .ant-menu-submenu-title:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected) {
                 //color: rgba(0, 0, 0, 0.88);
-                font-weight: 700;
+                font-weight: 600;
             }
             .ant-menu-submenu-selected {
                 .ant-menu-submenu-title:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected) {
                     color: rgba(77, 77, 77, 0.88);
-                    font-weight: 700;
+                    font-weight: 600;
                 }
                 .ant-menu-submenu-open{
                     .ant-menu-submenu-title{
@@ -162,14 +162,10 @@ a:hover {
 }
 
 .ant-drawer-content-wrapper{
-    width:720px !important;
+    width:800px !important;
 }
 
-.w900{
-    .ant-drawer-content-wrapper{
-        width:900px !important;
-    }
-}
+
 
 .listBox{
     width:100%;margin-left:0;
@@ -182,6 +178,19 @@ a:hover {
     min-height: 300px;
     .ant-tree{
         background-color: transparent;
+    }
+    .tree_type_1 {
+        color: #000000;
+    }
+    .tree_type_2 {
+        color: var(--c_color);
+    }
+    .tree_type_3 {
+        color: #149740;
+    }
+
+    .tree_status0 {
+        color: #cacaca;
     }
 }
 .treeBox+.listBox{
@@ -223,4 +232,8 @@ table {
             color:#999;
         }
     }
+}
+
+.wangeditor {
+    min-height: 300px;
 }
